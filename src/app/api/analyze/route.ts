@@ -28,7 +28,7 @@ export async function POST(req: Request) {
     }
 
     const { object } = await generateObject({
-      model: google("gemini-2.0-flash-lite"),
+      model: google("gemini-2.5-flash-lite"),
       schema,
       system: `You are a Korean stock market analyst AI. Analyze stocks based on your general knowledge of the company, industry trends, and market dynamics. Provide realistic and balanced analysis in Korean. Today's date is ${new Date().toISOString().split("T")[0]}.`,
       prompt: `한국 주식시장에서 "${stock}" 종목에 대한 시장 분석을 제공해주세요. 현재 시장 상황, 업종 동향, 기업 펀더멘탈 등을 고려하여 분석해주세요.`,
