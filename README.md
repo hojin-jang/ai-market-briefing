@@ -10,11 +10,32 @@ AI가 오늘의 한국 주식시장을 분석해서 알려주는 웹앱입니다
 
 ## 기술 스택
 
-- **Next.js** — React 기반 풀스택 프레임워크
-- **TailwindCSS** — 유틸리티 CSS 프레임워크
-- **Google Gemini API** — AI 분석 (Vercel AI SDK 사용)
+- **[Next.js](https://nextjs.org/docs)** — React 기반 풀스택 프레임워크
+- **[TailwindCSS](https://tailwindcss.com/docs)** — 유틸리티 CSS 프레임워크 ([기초 가이드](./docs/tailwind-guide.md))
+- **[Google Gemini API](https://ai.google.dev/gemini-api/docs)** — AI 분석 ([Vercel AI SDK](https://sdk.vercel.ai/docs) 사용)
+- **[React](https://react.dev/learn)** — UI 라이브러리
 
-## 시작하기
+## 처음부터 따라 만들기
+
+> 코딩 경험이 없어도 하루 만에 완성할 수 있는 단계별 튜토리얼입니다.
+
+**[Step 1. 프로젝트 만들기](./docs/tutorial/step-01-setup.md)** → 환경 세팅 + 첫 실행
+
+**[Step 2. 레이아웃과 스타일](./docs/tutorial/step-02-layout.md)** → 다크 테마 + 헤더
+
+**[Step 3. Mock API 만들기](./docs/tutorial/step-03-mock-api.md)** → 가짜 데이터 API
+
+**[Step 4. 브리핑 화면 만들기](./docs/tutorial/step-04-briefing.md)** → 시장 지수 + 헤드라인
+
+**[Step 5. 종목 분석 기능](./docs/tutorial/step-05-stock-analysis.md)** → 종목별 AI 분석
+
+**[Step 6. 소개 페이지](./docs/tutorial/step-06-about-page.md)** → 페이지 이동
+
+**[Step 7. 실제 AI 연결](./docs/tutorial/step-07-real-api.md)** → Google Gemini API
+
+---
+
+## 시작하기 (완성된 코드 실행)
 
 ### 1. 프로젝트 클론
 
@@ -138,3 +159,12 @@ GET /api/mock?stock=삼성전자
 | `summary` | string | 종목 분석 요약 |
 | `insights[].type` | string | positive, trend, news, warning |
 | `insights[].text` | string | 인사이트 내용 |
+
+## 학습 자료
+
+이 프로젝트의 코드를 기반으로 설명한 가이드입니다.
+
+- [Next.js 가이드](./docs/nextjs-guide.md) — 라우팅, 레이아웃, API 라우트, "use client"
+- [React 가이드](./docs/react-guide.md) — useState, useEffect, 조건부 렌더링, fetch
+- [TailwindCSS 가이드](./docs/tailwind-guide.md) — 자주 쓰는 클래스, CSS와 비교
+- [AI SDK + Gemini 가이드](./docs/ai-sdk-guide.md) — AI 연동, 프롬프트 작성, mock vs 실제 API
