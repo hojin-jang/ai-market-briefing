@@ -1,6 +1,25 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
+
+interface MarketIndex {
+  name: string;
+  value: string;
+  change: string;
+  up: boolean;
+  summary: string;
+}
+
+interface HotStock {
+  name: string;
+  reason: string;
+}
+
+interface Briefing {
+  markets: MarketIndex[];
+  headline: string;
+  hotStocks: HotStock[];
+}
 
 interface Insight {
   type: "positive" | "trend" | "news" | "warning";
@@ -12,34 +31,6 @@ interface Analysis {
   summary: string;
   insights: Insight[];
 }
-
-const STOCKS = [
-  "삼성전자",
-  "SK하이닉스",
-  "현대자동차",
-  "NAVER",
-  "카카오",
-  "LG에너지솔루션",
-  "셀트리온",
-  "POSCO홀딩스",
-];
-
-const MARKETS = [
-  {
-    name: "KOSPI",
-    value: "2,580.42",
-    change: "+1.24%",
-    up: true,
-    ai: "AI: 반도체 섹터 강세가 시장 상승 견인",
-  },
-  {
-    name: "KOSDAQ",
-    value: "865.15",
-    change: "-0.52%",
-    up: false,
-    ai: "AI: 바이오 대형주 차익실현 관측",
-  },
-];
 
 const ICON_MAP: Record<string, string> = {
   positive: "check_circle",
@@ -57,10 +48,35 @@ function formatDate() {
 }
 
 export default function Home() {
+  const [briefing, setBriefing] = useState<Briefing | null>(null);
+  const [briefingLoading, setBriefingLoading] = useState(true);
+  const [briefingError, setBriefingError] = useState<string | null>(null);
+
   const [selected, setSelected] = useState<string | null>(null);
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const fetchBriefing = useCallback(async () => {
+    setBriefingLoading(true);
+    setBriefingError(null);
+    try {
+      const res = await fetch("/api/briefing", { method: "POST" });
+      if (!res.ok) throw new Error("브리핑 요청 실패");
+      const data: Briefing = await res.json();
+      setBriefing(data);
+    } catch (e) {
+      setBriefingError(
+        e instanceof Error ? e.message : "브리핑을 불러올 수 없습니다"
+      );
+    } finally {
+      setBriefingLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchBriefing();
+  }, [fetchBriefing]);
 
   const analyze = useCallback(
     async (stock: string) => {
@@ -76,19 +92,15 @@ export default function Home() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ stock }),
         });
-
         if (!res.ok) {
           const data = await res.json().catch(() => ({}));
           throw new Error(data.error || "분석 요청 실패");
         }
-
         const data: Analysis = await res.json();
         setAnalysis(data);
       } catch (e) {
         setError(
-          e instanceof Error
-            ? e.message
-            : "분석 중 오류가 발생했습니다. API 키를 확인해주세요."
+          e instanceof Error ? e.message : "분석 중 오류가 발생했습니다"
         );
       } finally {
         setLoading(false);
@@ -111,44 +123,100 @@ export default function Home() {
         </div>
         <div className="flex items-center gap-2">
           <p className="text-slate-400 text-xs font-medium">{formatDate()}</p>
-          <div className="flex items-center gap-1.5 bg-red-500/10 px-2 py-1 rounded-full border border-red-500/20">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
+          <button
+            onClick={() => {
+              fetchBriefing();
+              setSelected(null);
+              setAnalysis(null);
+            }}
+            disabled={briefingLoading}
+            className="flex items-center gap-1 bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded-full border border-slate-700 transition-colors disabled:opacity-50"
+          >
+            <span
+              className={`material-symbols-outlined text-primary text-sm ${briefingLoading ? "animate-spin" : ""}`}
+            >
+              {briefingLoading ? "progress_activity" : "refresh"}
             </span>
-            <span className="text-red-500 text-[10px] font-bold uppercase tracking-wider">
-              Live
+            <span className="text-slate-300 text-[10px] font-bold">
+              새로고침
             </span>
-          </div>
+          </button>
         </div>
       </header>
 
       <main className="flex-1 pb-8">
         {/* Market Summary Cards */}
         <div className="grid grid-cols-2 gap-3 p-4">
-          {MARKETS.map((m) => (
-            <div
-              key={m.name}
-              className="bg-card-bg rounded-xl p-4 border border-slate-800 shadow-sm"
-            >
-              <div className="flex justify-between items-start mb-1">
-                <span className="text-slate-400 text-xs font-semibold">
-                  {m.name}
-                </span>
-                <span
-                  className={`text-xs font-bold ${m.up ? "text-market-up" : "text-market-down"}`}
+          {briefingLoading
+            ? [0, 1].map((i) => (
+                <div
+                  key={i}
+                  className="bg-card-bg rounded-xl p-4 border border-slate-800 shadow-sm animate-pulse"
                 >
-                  {m.change}
-                </span>
-              </div>
-              <div
-                className={`text-2xl font-bold mb-2 ${m.up ? "text-market-up" : "text-market-down"}`}
-              >
-                {m.value}
-              </div>
-              <p className="text-slate-400 text-[10px] leading-tight">{m.ai}</p>
+                  <div className="flex justify-between mb-2">
+                    <div className="h-3 bg-slate-700 rounded w-14" />
+                    <div className="h-3 bg-slate-700 rounded w-12" />
+                  </div>
+                  <div className="h-7 bg-slate-700 rounded w-28 mb-3" />
+                  <div className="h-2.5 bg-slate-700 rounded w-full" />
+                </div>
+              ))
+            : briefing?.markets.map((m) => (
+                <div
+                  key={m.name}
+                  className="bg-card-bg rounded-xl p-4 border border-slate-800 shadow-sm"
+                >
+                  <div className="flex justify-between items-start mb-1">
+                    <span className="text-slate-400 text-xs font-semibold">
+                      {m.name}
+                    </span>
+                    <span
+                      className={`text-xs font-bold ${m.up ? "text-market-up" : "text-market-down"}`}
+                    >
+                      {m.change}
+                    </span>
+                  </div>
+                  <div
+                    className={`text-2xl font-bold mb-2 ${m.up ? "text-market-up" : "text-market-down"}`}
+                  >
+                    {m.value}
+                  </div>
+                  <p className="text-slate-400 text-[10px] leading-tight">
+                    {m.summary}
+                  </p>
+                </div>
+              ))}
+        </div>
+
+        {/* Headline */}
+        <div className="px-4 mb-4">
+          {briefingLoading ? (
+            <div className="animate-pulse">
+              <div className="h-4 bg-slate-700 rounded w-full mb-1.5" />
+              <div className="h-4 bg-slate-700 rounded w-2/3" />
             </div>
-          ))}
+          ) : briefingError ? (
+            <div className="bg-card-bg rounded-xl border border-red-500/20 p-4 text-center">
+              <p className="text-red-400 text-sm mb-2">{briefingError}</p>
+              <button
+                onClick={fetchBriefing}
+                className="text-primary text-xs font-medium hover:underline"
+              >
+                다시 시도
+              </button>
+            </div>
+          ) : briefing ? (
+            <div className="bg-card-bg rounded-lg px-4 py-3 border border-slate-800">
+              <div className="flex items-start gap-2">
+                <span className="material-symbols-outlined text-primary text-base mt-0.5 flex-shrink-0">
+                  breaking_news
+                </span>
+                <p className="text-slate-300 text-sm leading-relaxed">
+                  {briefing.headline}
+                </p>
+              </div>
+            </div>
+          ) : null}
         </div>
 
         {/* Hot Stocks */}
@@ -162,19 +230,27 @@ export default function Home() {
             </h3>
           </div>
           <div className="flex overflow-x-auto gap-2 px-4 pb-2 no-scrollbar">
-            {STOCKS.map((stock) => (
-              <button
-                key={stock}
-                onClick={() => analyze(stock)}
-                className={`flex-none px-4 py-2 rounded-full text-xs whitespace-nowrap transition-all ${
-                  selected === stock
-                    ? "border-2 border-primary bg-primary/10 text-primary font-bold"
-                    : "border border-slate-800 bg-card-bg text-slate-400 font-medium hover:border-slate-600"
-                }`}
-              >
-                {stock}
-              </button>
-            ))}
+            {briefingLoading
+              ? [1, 2, 3, 4, 5].map((i) => (
+                  <div
+                    key={i}
+                    className="flex-none h-9 w-24 bg-card-bg rounded-full border border-slate-800 animate-pulse"
+                  />
+                ))
+              : (briefing?.hotStocks ?? []).map((stock) => (
+                  <button
+                    key={stock.name}
+                    onClick={() => analyze(stock.name)}
+                    title={stock.reason}
+                    className={`flex-none px-4 py-2 rounded-full text-xs whitespace-nowrap transition-all ${
+                      selected === stock.name
+                        ? "border-2 border-primary bg-primary/10 text-primary font-bold"
+                        : "border border-slate-800 bg-card-bg text-slate-400 font-medium hover:border-slate-600"
+                    }`}
+                  >
+                    {stock.name}
+                  </button>
+                ))}
           </div>
         </section>
 
@@ -320,6 +396,7 @@ export default function Home() {
                     <button
                       onClick={() => {
                         setAnalysis(null);
+                        setError(null);
                         analyze(selected!);
                       }}
                       className="w-full py-3 bg-primary hover:bg-primary/90 text-white font-bold rounded-lg transition-colors flex items-center justify-center gap-2"
