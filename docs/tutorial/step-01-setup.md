@@ -6,13 +6,13 @@ Next.js 프로젝트를 생성하고, 개발 서버를 실행해서 브라우저
 
 ## 사전 준비
 
-- [Node.js](https://nodejs.org/) 설치 (v18 이상)
+- [Node.js](https://nodejs.org/) 설치 (v20 이상)
 - 터미널(명령 프롬프트) 사용법 기초
 
 설치 확인:
 
 ```bash
-node -v    # v18.0.0 이상이면 OK
+node -v    # v20.9.0 이상이면 OK
 npm -v     # 숫자가 나오면 OK
 ```
 
@@ -24,15 +24,23 @@ npm -v     # 숫자가 나오면 OK
 npx create-next-app@latest ai-market-briefing
 ```
 
-질문이 나오면 이렇게 선택하세요:
+첫 번째 질문이 나옵니다:
+
+```
+Would you like to use the recommended Next.js defaults? → No, customize settings
+```
+
+> "No, customize settings"를 선택해서 우리가 원하는 설정을 직접 골라야 합니다.
+
+그 다음 질문들이 나오면 이렇게 선택하세요:
 
 ```
 Would you like to use TypeScript? → No
-Would you like to use ESLint? → No
+Which linter would you like to use? → None
+Would you like to use React Compiler? → No
 Would you like to use Tailwind CSS? → Yes
 Would you like your code inside a `src/` directory? → Yes
 Would you like to use App Router? → Yes
-Would you like to use Turbopack for next dev? → No
 Would you like to customize the import alias? → No
 ```
 
@@ -55,7 +63,7 @@ npm run dev
 이런 메시지가 나오면 성공입니다:
 
 ```
-▲ Next.js 15.x.x
+▲ Next.js 16.x.x
 - Local: http://localhost:3000
 ```
 
@@ -76,7 +84,7 @@ ai-market-briefing/
 │       ├── layout.js      ← 모든 페이지의 공통 틀
 │       ├── page.js         ← 메인 페이지 (http://localhost:3000)
 │       └── globals.css     ← 전체 스타일
-├── tailwind.config.js      ← Tailwind 설정
+├── postcss.config.mjs      ← PostCSS 설정 (Tailwind용)
 ├── package.json            ← 프로젝트 정보 + 패키지 목록
 └── .gitignore              ← Git에 올리지 않을 파일 목록
 ```
