@@ -33,6 +33,10 @@ AI가 오늘의 한국 주식시장을 분석해서 알려주는 웹앱입니다
 
 **[Step 7. 실제 AI 연결](./docs/tutorial/step-07-real-api.md)** → Google Gemini API
 
+**[Step 8. 배포하기](./docs/tutorial/step-08-deploy.md)** → Vercel로 인터넷에 올리기
+
+**[다음 도전: 새 프로젝트 아이디어](./docs/tutorial/next-projects.md)** → 혼자 만들어보기
+
 ---
 
 ## 시작하기 (완성된 코드 실행)
