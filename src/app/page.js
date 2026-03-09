@@ -18,7 +18,7 @@ export default function Home() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/report", { method: "POST" });
+      const res = await fetch("/api/report");
       const data = await res.json();
       if (data.error) throw new Error(data.error);
       setBriefing(data);
@@ -38,11 +38,7 @@ export default function Home() {
     setError(null);
 
     try {
-      const res = await fetch("/api/report", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mode: "analyze", stock }),
-      });
+      const res = await fetch(`/api/report?stock=${stock}`);
       const data = await res.json();
       if (data.error) throw new Error(data.error);
       setAnalysis(data);
