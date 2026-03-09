@@ -4,50 +4,20 @@
 
 어두운 배경에 깔끔한 폰트가 적용된 기본 레이아웃을 만듭니다.
 
-## 1. Tailwind 색상 설정
-
-`tailwind.config.js` 파일을 열어서 **전체 내용**을 아래로 바꾸세요.
-
-```js
-/** @type {import('tailwindcss').Config} */
-module.exports = {
-  darkMode: "class",
-  content: ["./src/**/*.{js,jsx}"],
-  theme: {
-    extend: {
-      colors: {
-        primary: "#2a7dcf",
-        "background-dark": "#121920",
-        "market-up": "#ef4444",
-        "market-down": "#3b82f6",
-        "card-bg": "#1c252e",
-      },
-    },
-  },
-  plugins: [],
-};
-```
-
-### 이 코드가 하는 일
-
-Tailwind에 우리만의 색상을 추가합니다.
-
-- `primary` — 메인 색상 (파란색)
-- `background-dark` — 배경색 (어두운 남색)
-- `market-up` — 주가 상승 (빨간색, 한국 주식은 상승이 빨강)
-- `market-down` — 주가 하락 (파란색)
-- `card-bg` — 카드 배경 (약간 밝은 남색)
-
-이제 코드에서 `text-primary`, `bg-card-bg` 같은 클래스를 쓸 수 있습니다.
-
-## 2. 글로벌 스타일 설정
+## 1. 글로벌 스타일 + 색상 설정
 
 `src/app/globals.css` 파일을 열어서 **전체 내용**을 아래로 바꾸세요.
 
 ```css
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #2a7dcf;
+  --color-background-dark: #121920;
+  --color-market-up: #ef4444;
+  --color-market-down: #3b82f6;
+  --color-card-bg: #1c252e;
+}
 
 body {
   font-family: "Inter", sans-serif;
@@ -66,11 +36,35 @@ body {
 
 ### 이 코드가 하는 일
 
-- 위 3줄 — Tailwind CSS를 불러옵니다 (필수)
-- `font-family` — Inter 폰트를 기본 글꼴로 설정
-- `.no-scrollbar` — 가로 스크롤바를 숨기는 스타일 (나중에 종목 버튼에 사용)
+```css
+@import "tailwindcss";
+```
+Tailwind CSS를 불러옵니다 (필수).
 
-## 3. 레이아웃 만들기
+```css
+@theme {
+  --color-primary: #2a7dcf;
+  --color-background-dark: #121920;
+  ...
+}
+```
+`@theme` 안에서 커스텀 색상을 정의합니다. Tailwind v4에서는 CSS 안에서 직접 설정합니다.
+`--color-이름`으로 정의하면 `text-이름`, `bg-이름` 같은 클래스가 자동 생성됩니다.
+
+- `primary` — 메인 색상 (파란색)
+- `background-dark` — 배경색 (어두운 남색)
+- `market-up` — 주가 상승 (빨간색, 한국 주식은 상승이 빨강)
+- `market-down` — 주가 하락 (파란색)
+- `card-bg` — 카드 배경 (약간 밝은 남색)
+
+이제 코드에서 `text-primary`, `bg-card-bg` 같은 클래스를 쓸 수 있습니다.
+
+```css
+.no-scrollbar
+```
+가로 스크롤바를 숨기는 스타일입니다 (나중에 종목 버튼에 사용).
+
+## 2. 레이아웃 만들기
 
 `src/app/layout.js` 파일을 열어서 **전체 내용**을 아래로 바꾸세요.
 
@@ -137,7 +131,7 @@ Google에서 Inter 폰트를 가져옵니다.
 - `text-slate-100` — 기본 글씨를 밝은 색으로
 - `{children}` — 여기에 page.js의 내용이 들어갑니다
 
-## 4. 첫 화면 만들기
+## 3. 첫 화면 만들기
 
 `src/app/page.js` 파일을 열어서 **전체 내용**을 아래로 바꾸세요.
 

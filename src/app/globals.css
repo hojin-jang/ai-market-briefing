@@ -1,6 +1,12 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #2a7dcf;
+  --color-background-dark: #121920;
+  --color-market-up: #ef4444;
+  --color-market-down: #3b82f6;
+  --color-card-bg: #1c252e;
+}
 
 body {
   font-family: "Inter", sans-serif;
