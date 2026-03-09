@@ -15,7 +15,3 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
-
-.fill-1 {
-  font-variation-settings: "FILL" 1;
-}

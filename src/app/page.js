@@ -2,23 +2,6 @@
 
 import { useState, useEffect } from "react";
 
-const ICON_MAP = {
-  positive: "check_circle",
-  trend: "trending_up",
-  news: "new_releases",
-  warning: "warning",
-};
-
-const STOCKS = [
-  "삼성전자",
-  "SK하이닉스",
-  "현대자동차",
-  "NAVER",
-  "카카오",
-  "LG에너지솔루션",
-  "셀트리온",
-];
-
 export default function Home() {
   const [briefing, setBriefing] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -82,14 +65,9 @@ export default function Home() {
     <div className="flex min-h-screen flex-col max-w-lg mx-auto">
       {/* 헤더 */}
       <header className="flex items-center p-4 border-b border-slate-800 justify-between sticky top-0 z-50 bg-background-dark">
-        <div className="flex items-center gap-2">
-          <span className="material-symbols-outlined text-primary text-2xl">
-            insights
-          </span>
-          <h1 className="text-slate-100 text-lg font-bold tracking-tight">
-            AI Market Briefing
-          </h1>
-        </div>
+        <h1 className="text-slate-100 text-lg font-bold">
+          📊 오늘의 주식 브리핑
+        </h1>
         <span className="text-slate-400 text-xs">{dateStr}</span>
       </header>
 
@@ -97,9 +75,6 @@ export default function Home() {
         {/* 에러 */}
         {error && (
           <div className="bg-card-bg rounded-xl border border-red-500/20 p-6 text-center">
-            <span className="material-symbols-outlined text-red-400 text-3xl mb-2 block">
-              error
-            </span>
             <p className="text-red-400 text-sm mb-3">{error}</p>
             <button
               onClick={fetchBriefing}
@@ -112,10 +87,9 @@ export default function Home() {
 
         {/* 시장 지수 */}
         {loading ? (
-          <div className="grid grid-cols-2 gap-3 animate-pulse">
-            <div className="bg-card-bg rounded-xl p-4 border border-slate-800 h-24" />
-            <div className="bg-card-bg rounded-xl p-4 border border-slate-800 h-24" />
-          </div>
+          <p className="text-slate-400 text-sm text-center py-8">
+            시장 정보 불러오는 중... ⏳
+          </p>
         ) : (
           briefing && (
             <>
@@ -136,7 +110,7 @@ export default function Home() {
                     <span
                       className={`text-xs ${m.up ? "text-market-up/70" : "text-market-down/70"}`}
                     >
-                      {m.change}
+                      {m.up ? "🚀" : "💧"} {m.change}
                     </span>
                   </div>
                 ))}
@@ -144,14 +118,9 @@ export default function Home() {
 
               {/* 헤드라인 */}
               <div className="bg-card-bg rounded-xl px-4 py-3 border border-slate-800">
-                <div className="flex items-start gap-2">
-                  <span className="material-symbols-outlined text-primary text-base mt-0.5">
-                    breaking_news
-                  </span>
-                  <p className="text-slate-200 text-sm font-medium leading-relaxed">
-                    {briefing.headline}
-                  </p>
-                </div>
+                <p className="text-slate-200 text-sm leading-relaxed">
+                  {briefing.headline}
+                </p>
               </div>
             </>
           )
@@ -159,77 +128,66 @@ export default function Home() {
 
         {/* 종목 선택 */}
         <section>
-          <h2 className="text-slate-100 text-sm font-bold flex items-center gap-1 mb-3">
-            <span className="material-symbols-outlined text-primary text-lg">
-              local_fire_department
-            </span>
-            종목 분석
+          <h2 className="text-slate-100 text-sm font-bold mb-3">
+            🎯 종목 분석
           </h2>
           <div className="flex overflow-x-auto gap-2 pb-2 no-scrollbar">
-            {STOCKS.map((stock) => (
-              <button
-                key={stock}
-                onClick={() => fetchAnalysis(stock)}
-                className={`flex-none px-4 py-2 rounded-full text-xs whitespace-nowrap transition-all ${
-                  selected === stock
-                    ? "border-2 border-primary bg-primary/10 text-primary font-bold"
-                    : "border border-slate-800 bg-card-bg text-slate-400 font-medium hover:border-slate-600"
-                }`}
-              >
-                {stock}
-              </button>
-            ))}
+            {loading ? (
+              <p className="text-slate-500 text-xs">종목 불러오는 중...</p>
+            ) : (
+              (briefing?.hotStocks || []).map((stock) => (
+                <button
+                  key={stock}
+                  onClick={() => fetchAnalysis(stock)}
+                  className={`flex-none px-4 py-2 rounded-full text-xs whitespace-nowrap transition-all ${
+                    selected === stock
+                      ? "border-2 border-primary bg-primary/10 text-primary font-bold"
+                      : "border border-slate-800 bg-card-bg text-slate-400 font-medium hover:border-slate-600"
+                  }`}
+                >
+                  {stock}
+                </button>
+              ))
+            )}
           </div>
         </section>
 
         {/* 분석 결과 */}
         {!selected && (
           <div className="bg-card-bg rounded-xl border border-slate-800 p-12 text-center">
-            <span className="material-symbols-outlined text-slate-600 text-5xl mb-4 block">
-              psychology
-            </span>
+            <p className="text-4xl mb-4">👆</p>
             <p className="text-slate-500 text-sm">
-              종목을 선택하면 AI 분석이 시작됩니다
+              궁금한 종목을 눌러보세요!
             </p>
           </div>
         )}
 
         {selected && (analyzing || analysis) && (
-          <div className="bg-card-bg rounded-xl border border-slate-800 shadow-xl overflow-hidden">
+          <div className="bg-card-bg rounded-xl border border-slate-800 overflow-hidden">
             {/* 패널 헤더 */}
-            <div className="p-5 border-b border-slate-800 bg-gradient-to-r from-primary/10 to-transparent">
+            <div className="p-5 border-b border-slate-800">
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h3 className="text-white text-lg font-bold">{selected}</h3>
-                  <p className="text-slate-400 text-xs">AI Insight Analysis</p>
+                  <p className="text-slate-400 text-xs">AI 분석 결과</p>
                 </div>
-                <div className="bg-slate-900/50 p-2 rounded-lg border border-slate-700">
-                  <span
-                    className={`material-symbols-outlined text-primary ${analyzing ? "animate-spin" : ""}`}
-                  >
-                    {analyzing ? "progress_activity" : "psychology"}
-                  </span>
-                </div>
+                <span className="text-2xl">
+                  {analyzing ? "⏳" : "✅"}
+                </span>
               </div>
 
-              {/* 센티먼트 바 */}
+              {/* 시장 분위기 */}
               {analyzing ? (
-                <div className="animate-pulse">
-                  <div className="flex justify-between mb-2">
-                    <div className="h-3 bg-slate-700 rounded w-24" />
-                    <div className="h-3 bg-slate-700 rounded w-20" />
-                  </div>
-                  <div className="h-2 bg-slate-700 rounded-full" />
-                </div>
+                <p className="text-slate-400 text-sm">분석 중...</p>
               ) : (
                 analysis && (
                   <div>
                     <div className="flex justify-between items-end mb-2">
-                      <span className="text-slate-300 text-xs font-medium">
-                        Market Sentiment
+                      <span className="text-slate-300 text-xs">
+                        시장 분위기
                       </span>
                       <span className="text-primary text-sm font-bold">
-                        {analysis.sentiment}% Positive
+                        {analysis.sentiment}%
                       </span>
                     </div>
                     <div className="h-2 w-full bg-slate-800 rounded-full flex overflow-hidden">
@@ -243,51 +201,32 @@ export default function Home() {
                       />
                     </div>
                     <div className="flex justify-between mt-1">
-                      <span className="text-[9px] text-slate-500 uppercase font-bold tracking-widest">
-                        Bullish
-                      </span>
-                      <span className="text-[9px] text-slate-500 uppercase font-bold tracking-widest">
-                        Bearish
-                      </span>
+                      <span className="text-[10px] text-slate-500">긍정</span>
+                      <span className="text-[10px] text-slate-500">부정</span>
                     </div>
                   </div>
                 )
               )}
             </div>
 
-            {/* 인사이트 */}
+            {/* 핵심 요약 */}
             <div className="p-5">
-              <h4 className="text-slate-100 text-xs font-bold uppercase tracking-widest mb-4 flex items-center gap-2">
-                <span className="w-1 h-3 bg-primary rounded-full" />
-                Key Summary Report
+              <h4 className="text-slate-100 text-sm font-bold mb-4">
+                핵심 요약
               </h4>
 
               {analyzing ? (
-                <div className="space-y-4 animate-pulse">
-                  {[0, 1, 2, 3].map((i) => (
-                    <div key={i} className="flex gap-3">
-                      <div className="w-5 h-5 bg-slate-700 rounded-full flex-shrink-0" />
-                      <div className="flex-1 space-y-2">
-                        <div className="h-3 bg-slate-700 rounded w-full" />
-                        <div className="h-3 bg-slate-700 rounded w-3/4" />
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                <p className="text-slate-400 text-sm">AI가 분석하는 중...</p>
               ) : (
                 analysis && (
                   <>
-                    <ul className="space-y-4">
+                    <ul className="space-y-3">
                       {analysis.insights.map((item, i) => (
-                        <li key={i} className="flex gap-3">
-                          <span
-                            className={`material-symbols-outlined text-lg flex-shrink-0 mt-0.5 ${
-                              item.type === "warning"
-                                ? "text-amber-500"
-                                : "text-primary"
-                            }`}
-                          >
-                            {ICON_MAP[item.type] || "info"}
+                        <li key={i} className="flex gap-2">
+                          <span className="flex-shrink-0">
+                            {item.type === "warning" ? "⚠️" :
+                             item.type === "positive" ? "👍" :
+                             item.type === "trend" ? "📈" : "📰"}
                           </span>
                           <p className="text-slate-300 text-sm leading-relaxed">
                             {item.text}
