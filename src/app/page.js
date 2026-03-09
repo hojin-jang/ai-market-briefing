@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 
 export default function Home() {
   const [briefing, setBriefing] = useState(null);
@@ -244,6 +245,15 @@ export default function Home() {
             </div>
           </div>
         )}
+        {/* 앱 소개 링크 */}
+        <Link
+          href="/about"
+          className="block bg-primary/10 rounded-xl border border-primary/30 p-4 text-center hover:bg-primary/20 transition-all"
+        >
+          <p className="text-primary text-sm font-medium">
+            이 앱은 어떻게 만들어졌을까? →
+          </p>
+        </Link>
       </main>
     </div>
   );
