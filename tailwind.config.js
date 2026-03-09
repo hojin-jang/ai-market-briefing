@@ -1,8 +1,7 @@
-import type { Config } from "tailwindcss";
-
-const config: Config = {
+/** @type {import('tailwindcss').Config} */
+module.exports = {
   darkMode: "class",
-  content: ["./src/**/*.{ts,tsx}"],
+  content: ["./src/**/*.{js,jsx}"],
   theme: {
     extend: {
       colors: {
@@ -12,12 +11,7 @@ const config: Config = {
         "market-down": "#3b82f6",
         "card-bg": "#1c252e",
       },
-      fontFamily: {
-        display: ["Inter", "sans-serif"],
-      },
     },
   },
   plugins: [],
 };
-
-export default config;

@@ -1,16 +1,11 @@
-import type { Metadata } from "next";
 import "./globals.css";
 
-export const metadata: Metadata = {
+export const metadata = {
   title: "AI Market Briefing",
-  description: "AI-powered Korean stock market analysis",
+  description: "AI 주식시장 일일 보고서",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }) {
   return (
     <html lang="ko" className="dark">
       <head>
